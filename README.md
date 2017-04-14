@@ -1,2 +1,2 @@
 ## Zen-Bot
-Zen-Bot is a nice, lovely, and useful discord bot, written in javascript.
+Zen-Bot is a nice, useful discord bot that is written in javascript.
