@@ -17,26 +17,21 @@ bot.on("message", message => {
 });
 
 //Event listener for when both "joinvoice" and "leavevoice" are inputted
-//bot.on("message", message => {
+bot.on("message", message => {
     //Voice channel ID that the bot will connect to when the command "joinvoice" is inputted goes within the quote marks
-    //let voiceChannel = bot.channels.get("296737276405350402");
-    //if(message.content === "joinvoice") {
-        //voiceChannel.join()
-        //.then(connection => {
+    let voiceChannel = bot.channels.get("296737276405350402");
+    if(message.content === "play-track") {
+        voiceChannel.join()
+        .then(connection => {
             //Audio file directory, in this case the root directory goes within the quote marks
-            //return connection.playFile("./song.wav");
-        //})
-        //.then(dispatcher => {
-            //dispatcher.on("error", console.error);
-        //})
-        //.catch(console.error);
-    //}
-    //if(message.content === "leavevoice") {
-        //voiceChannel.leave();
-    //}
-//});
-
-//var test = ["a", "b", "c"];
+            return connection.playFile("./song.wav");
+        })
+        .then(dispatcher => {
+            dispatcher.on("error", console.error);
+        })
+        .catch(console.error);
+    }
+});
 
 //Array for the list of YouTube urls to pull when looping over voice streams
 let urlsPlaylist = [
@@ -62,7 +57,7 @@ bot.on("message", message => {
     let voiceChannel = bot.channels.get("VOICE CHANNEL ID GOES HERE");
     const ytdl = require("ytdl-core");
     const streamOptions = {seek: 0, volume: 1};
-    if(message.content === "joinvoice") {
+    if(message.content === "play-youtube") {
         function myLoop() {
             //Random number with the number at the end always being the total number urls in the urlsPlaylist array to give a number within the range of the total amount which will be used to select a track
             let random = urlsPlaylist.length - Math.floor(Math.random() * 4); 
