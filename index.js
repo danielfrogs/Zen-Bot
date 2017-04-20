@@ -62,20 +62,5 @@ bot.on("message", message => {
     }
 });
 
-    //if(message.content.startsWith("https://www.youtube.com/watch?v=")) {
-        //voiceChannel.join()
-        //.then(connection => {
-            //let stream = ytdl(message.content, {filter: "audioonly", quality: "lowest"});
-            //const dispatcher = connection.playStream(stream, streamOptions);
-            //setInterval(connection.speaking)
-            //dispatcher.on("end", () => {
-                //voiceChannel.leave();
-            //});
-        //});
-    //}
-//});
-
-
-
 //Log the Discord bot application in
 bot.login(token);
