@@ -20,7 +20,7 @@ bot.on("message", message => {
 bot.on("message", message => {
     //Voice channel ID that the bot will connect to when the command "joinvoice" is inputted goes within the quote marks
     let voiceChannel = bot.channels.get("296737276405350402");
-    if(message.content === "joinvoice") {
+    if(message.content === "play-track") {
         voiceChannel.join()
         .then(connection => {
             //Audio file directory, in this case the root directory goes within the quote marks
@@ -31,12 +31,46 @@ bot.on("message", message => {
         })
         .catch(console.error);
     }
+});
+
+//Array for the list of YouTube urls to pull when looping over voice streams
+let urlsPlaylist = [
+    "https://www.youtube.com/watch?v=JbjzPKTfjlc", //Position 0
+    "https://www.youtube.com/watch?v=I2rmvWNwKz0",
+    "https://www.youtube.com/watch?v=no3B0uS6nLk",
+    "https://www.youtube.com/watch?v=3oQHMREyXSw",
+    "https://www.youtube.com/watch?v=L7I9we5jP3I"
+]
+
+//Event listener for when both "joinvoice" and "leavevoice" are inputted
+bot.on("message", message => {
+    //Voice channel ID that the bot will connect to when the command "joinvoice" is inputted goes within the quote marks
+    let voiceChannel = bot.channels.get("VOICE CHANNEL ID GOES HERE");
+    const ytdl = require("ytdl-core");
+    const streamOptions = {seek: 0, volume: 1};
+    if(message.content === "play-youtube") {
+        function looping() {
+            //Random number representing position within the urlsPlaylist array to select url. End number must be equal to the total amount of possibly selected urls from the array discounting position 0
+            randomPosition = Math.round(Math.random() * 4); 
+            console.log("Song position in array:", randomPosition);
+
+            //Bot joins voice channel and plays the YouTube stream collected from urlsPlaylist array
+            voiceChannel.join()
+            .then(connection => {
+                let stream = ytdl(urlsPlaylist[randomPosition], {filter: "audioonly", quality: "lowest"});
+                const dispatcher = connection.playStream(stream, streamOptions);
+                dispatcher.on("end", () => {
+                    looping();
+                });
+            })  
+            .catch(console.error);
+        }
+        looping();
+    }
     if(message.content === "leavevoice") {
-        voiceChannel.leave();
+    voiceChannel.leave();
     }
 });
 
 //Log the Discord bot application in
 bot.login(token);
-
-
