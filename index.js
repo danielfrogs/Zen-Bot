@@ -35,21 +35,12 @@ bot.on("message", message => {
 
 //Array for the list of YouTube urls to pull when looping over voice streams
 let urlsPlaylist = [
-    "https://www.youtube.com/watch?v=JbjzPKTfjlc",
-    "https://www.youtube.com/watch?v=JbjzPKTfjlc",
+    "https://www.youtube.com/watch?v=JbjzPKTfjlc", //Position 0
+    "https://www.youtube.com/watch?v=I2rmvWNwKz0",
     "https://www.youtube.com/watch?v=no3B0uS6nLk",
-    "https://www.youtube.com/watch?v=3oQHMREyXSw"
-] 
-
-//Array for the total time to delay the loop in milliseconds dependent on the YouTube stream that is being played (must be in same order as urls are in urlPlaylist array)
-let urlsTimePlaylist = [
-    360000,
-    360000,
-    554000,
-    224000
+    "https://www.youtube.com/watch?v=3oQHMREyXSw",
+    "https://www.youtube.com/watch?v=L7I9we5jP3I"
 ]
-
-var i = 1;
 
 //Event listener for when both "joinvoice" and "leavevoice" are inputted
 bot.on("message", message => {
@@ -58,35 +49,28 @@ bot.on("message", message => {
     const ytdl = require("ytdl-core");
     const streamOptions = {seek: 0, volume: 1};
     if(message.content === "play-youtube") {
-        function myLoop() {
-            //Random number with the number at the end always being the total number urls in the urlsPlaylist array to give a number within the range of the total amount which will be used to select a track
-            let random = urlsPlaylist.length - Math.floor(Math.random() * 4); 
-                setInterval(function () {
-                    //Checks to see if loop is continuing
-                    console.log("Logged");
-                    i++;
-                    if(i < 10) {
-                        myLoop();
-                    }
-                }, urlsTimePlaylist[random]);
-                console.log("Selected placeholder:", random);
-                console.log("Time wiat in milliseconds:", urlsTimePlaylist[random]);
-                //Bot joins voice channel and plays the YouTube stream collected from urlsPlaylist array
-                voiceChannel.join()
-                .then(connection => {
-                    const stream = ytdl(urlsPlaylist[random], {filter: "audioonly", quality: "lowest"});
-                    return connection.playStream(stream, streamOptions);
-                })
+        function looping() {
+            //Random number representing position within the urlsPlaylist array to select url. End number must be equal to the total amount of possibly selected urls from the array discounting position 0
+            randomPosition = Math.round(Math.random() * 4); 
+            console.log("Song position in array:", randomPosition);
+
+            //Bot joins voice channel and plays the YouTube stream collected from urlsPlaylist array
+            voiceChannel.join()
+            .then(connection => {
+                let stream = ytdl(urlsPlaylist[randomPosition], {filter: "audioonly", quality: "lowest"});
+                const dispatcher = connection.playStream(stream, streamOptions);
+                dispatcher.on("end", () => {
+                    looping();
+                });
+            })  
             .catch(console.error);
-        }    
-        myLoop()
+        }
+        looping();
     }
     if(message.content === "leavevoice") {
-        voiceChannel.leave();
+    voiceChannel.leave();
     }
 });
 
 //Log the Discord bot application in
 bot.login(token);
-
-
